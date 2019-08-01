@@ -27,7 +27,8 @@ const logger = winston.createLogger({
     levels: customLevels.levels,
     transports: [
         new winston.transports.File({
-            filename: 'logs/error.log',
+            maxsize: '1000',
+            filename: 'errors/error.log',
             level: 'error',
             format: winston.format.simple(),
         }),
@@ -39,9 +40,8 @@ const logger = winston.createLogger({
 });
 
 //
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
+// logs if not in production in a simple colorized
+// format
 if (process.env.NODE_ENV !== 'production') {
     logger.add(
         new winston.transports.Console({
@@ -54,6 +54,7 @@ if (process.env.NODE_ENV !== 'production') {
     );
 }
 
+// removes the extra line from logging output for morgan
 logger.stream = {
     write: function(message, encoding) {
         logger.request(message.replace(/\n$/, ''));

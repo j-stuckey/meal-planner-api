@@ -9,6 +9,7 @@ const { PORT, CLIENT_ORIGIN } = require('./config');
 
 const app = express();
 
+// wraps morgan with winston logger
 app.use(
     require('morgan')(
         process.env.NODE_ENV === 'production' ? 'common' : 'dev',
