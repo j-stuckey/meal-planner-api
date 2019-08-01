@@ -9,15 +9,19 @@ const { PORT, CLIENT_ORIGIN } = require('./config');
 
 const { dbConnect } = require('./db');
 
-
 const app = express();
 
 // wraps morgan with winston logger
 app.use(
-    morgan(
-        process.env.NODE_ENV === 'production' ? 'common' : 'dev',
-        { stream: logger.stream },
-    ),
+    morgan(process.env.NODE_ENV === 'production' ? 'common' : 'dev', {
+        stream: logger.stream,
+    }),
+);
+
+app.use(
+    cors({
+        origin: CLIENT_ORIGIN
+    })
 );
 
 // parses request body
