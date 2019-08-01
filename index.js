@@ -7,11 +7,14 @@ const morgan = require('morgan');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 
+const { dbConnect } = require('./db');
+
+
 const app = express();
 
 // wraps morgan with winston logger
 app.use(
-    require('morgan')(
+    morgan(
         process.env.NODE_ENV === 'production' ? 'common' : 'dev',
         { stream: logger.stream },
     ),
@@ -36,7 +39,8 @@ function runServer(port = PORT) {
 }
 
 if (require.main === module) {
-    // dbConnect();
+    dbConnect();
+    logger.info('Database connection receieved');
     runServer();
 }
 
