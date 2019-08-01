@@ -7,12 +7,14 @@ const customLevels = {
         error: 0,
         warn: 1,
         info: 2,
-        verbose: 3,
-        debug: 4,
+        request: 3,
+        verbose: 4,
+        debug: 5,
     },
     colors: {
         debug: 'blue',
-        info: 'green',
+        info: 'blue',
+        request: 'green',
         warn: 'yellow',
         crit: 'yellow',
         error: 'red',
@@ -25,8 +27,13 @@ const logger = winston.createLogger({
     levels: customLevels.levels,
     transports: [
         new winston.transports.File({
-            filename: 'combined.log',
-            timestamp: true,
+            filename: 'logs/error.log',
+            level: 'error',
+            format: winston.format.simple(),
+        }),
+        new winston.transports.File({
+            format: winston.format.simple(),
+            filename: 'logs/combined.log',
         }),
     ],
 });
@@ -46,5 +53,11 @@ if (process.env.NODE_ENV !== 'production') {
         }),
     );
 }
+
+logger.stream = {
+    write: function(message, encoding) {
+        logger.request(message.replace(/\n$/, ''));
+    },
+};
 
 module.exports = logger;

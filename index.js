@@ -9,11 +9,18 @@ const { PORT, CLIENT_ORIGIN } = require('./config');
 
 const app = express();
 
+app.use(
+    require('morgan')(
+        process.env.NODE_ENV === 'production' ? 'common' : 'dev',
+        { stream: logger.stream },
+    ),
+);
+
 // parses request body
 app.use(express.json());
 
 app.get('/', (req, res, next) => {
-    res.send('OK');
+    res.send('Server OK');
 });
 
 function runServer(port = PORT) {
