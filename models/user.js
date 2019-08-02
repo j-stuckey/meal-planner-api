@@ -3,17 +3,19 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
+    firstName: { type: String, required: false },
+    lastName: { type: String, required: false },
+    email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
 });
 
 userSchema.set('toObject', {
     virtuals: true,
     versionKey: false,
     transform: (doc, ret) => {
-        delete ret._id;
         delete ret.password;
-    }
+    },
 });
 
 userSchema.methods.validatePassword = function(password) {
