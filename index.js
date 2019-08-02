@@ -28,7 +28,13 @@ app.use(
 app.use(express.json());
 
 app.get('/', (req, res, next) => {
+
     res.send('Server OK');
+});
+
+app.post('/api/users', (req, res, next) => {
+
+    logger.debug(req.body);
 });
 
 function runServer(port = PORT) {

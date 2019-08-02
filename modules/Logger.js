@@ -12,10 +12,10 @@ const customLevels = {
         debug: 5,
     },
     colors: {
-        debug: 'magenta',
+        debug: 'bold yellow',
         info: 'bold green',
         morgan: 'bold blue',
-        warn: 'bold yellow',
+        warn: 'magenta',
         error: 'bold red',
     },
 };
