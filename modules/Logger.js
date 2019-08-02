@@ -7,17 +7,16 @@ const customLevels = {
         error: 0,
         warn: 1,
         info: 2,
-        request: 3,
+        morgan: 3,
         verbose: 4,
         debug: 5,
     },
     colors: {
-        debug: 'blue',
-        info: 'blue',
-        request: 'green',
-        warn: 'yellow',
-        crit: 'yellow',
-        error: 'red',
+        debug: 'magenta',
+        info: 'bold green',
+        morgan: 'bold blue',
+        warn: 'bold yellow',
+        error: 'bold red',
     },
 };
 
@@ -46,8 +45,10 @@ if (process.env.NODE_ENV !== 'production') {
     logger.add(
         new winston.transports.Console({
             format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.simple(),
+                winston.format.colorize({
+                    all: true
+                }),
+                winston.format.simple()
             ),
             level: 'debug',
         }),
@@ -57,7 +58,7 @@ if (process.env.NODE_ENV !== 'production') {
 // removes the extra line from logging output for morgan
 logger.stream = {
     write: function(message, encoding) {
-        logger.request(message.replace(/\n$/, ''));
+        logger.morgan(message.replace(/\n$/, ''));
     },
 };
 
