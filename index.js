@@ -5,6 +5,10 @@ const cors = require('cors');
 const logger = require('./modules/Logger');
 const morgan = require('morgan');
 
+const passport = require('passport');
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
+
 const { PORT, CLIENT_ORIGIN } = require('./config');
 
 const { dbConnect } = require('./db');
@@ -20,22 +24,21 @@ app.use(
 
 app.use(
     cors({
-        origin: CLIENT_ORIGIN
-    })
+        origin: CLIENT_ORIGIN,
+    }),
 );
 
 // parses request body
 app.use(express.json());
 
-app.get('/', (req, res, next) => {
+// Configures pasport to use the Strategies
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
-    res.send('Server OK');
-});
 
-app.post('/api/users', (req, res, next) => {
+app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 
-    logger.debug(req.body);
-});
 
 function runServer(port = PORT) {
     const server = app
