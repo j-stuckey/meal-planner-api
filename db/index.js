@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const logger = require('../modules/Logger');
 mongoose.Promise = global.Promise;
+mongoose.set('useCreateIndex', true);
 
 const { MONGODB_URI } = require('../config');
 

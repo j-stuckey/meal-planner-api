@@ -1,9 +1,16 @@
-'use strict';
+    'use strict';
 
 const express = require('express');
 const cors = require('cors');
 const logger = require('./modules/Logger');
 const morgan = require('morgan');
+
+const passport = require('passport');
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
+
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 
@@ -20,21 +27,39 @@ app.use(
 
 app.use(
     cors({
-        origin: CLIENT_ORIGIN
-    })
+        origin: CLIENT_ORIGIN,
+    }),
 );
 
 // parses request body
 app.use(express.json());
 
-app.get('/', (req, res, next) => {
+// Configures pasport to use the Strategies
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
-    res.send('Server OK');
+app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
+
+// Custom 404 Not Found route handler
+app.use((req, res, next) => {
+    const err = new Error('Not Found');
+    err.status = 404;
+    logger.error(err);
+    next(err);
 });
 
-app.post('/api/users', (req, res, next) => {
-
-    logger.debug(req.body);
+app.use((err, req, res, next) => {
+    if (err.status) {
+        const errBody = Object.assign({}, err, { message: err.message });
+        logger.error(err.message);
+        res.status(err.status).json(errBody);
+    }
+    if (err.message) {
+        res.json({ err: err.message });
+    } else {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 function runServer(port = PORT) {
