@@ -14,3 +14,18 @@ services:
     - /usr/src/app/node_modules
     environment:
     - NODE_ENV=dev
+    - CLIENT_ORIGIN=http://localhost:5000
+    depends_on:
+    - database
+
+  database:
+    image: mongo
+    container_name: mongo_db
+    ports:
+    - "27017:27017"
+    volumes:
+    - data:/data/db
+    command: mongod
+
+volumes:
+    data:
