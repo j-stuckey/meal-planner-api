@@ -53,7 +53,7 @@ app.use((err, req, res, next) => {
     if (err.status) {
         const errBody = Object.assign({}, err, { message: err.message });
         logger.error(err.message);
-        res.status(err.status).json(errBody);
+        return res.status(err.status).json(errBody);
     }
     if (err.message) {
         res.json({ err: err.message });
