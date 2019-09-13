@@ -8,5 +8,7 @@ module.exports = {
         process.env.MONGODB_URI ||
         'mongodb://host.docker.internal:27017/journal',
     JWT_SECRET: process.env.JWT_SECRET,
-    JWT_EXPIRY: process.env.JWT_EXPIRY || '3d'
+    JWT_EXPIRY: process.env.JWT_EXPIRY || '3d',
+    EMAIL_ACCOUNT: process.env.EMAIL_ACCOUNT,
+    EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
 };
