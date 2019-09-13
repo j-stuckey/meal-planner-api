@@ -23,8 +23,6 @@ const sendEmail = (userEmail, emailSubject, emailText) => {
     });
 };
 
-const filepath = '../files/test.txt';
 
-sendEmail('jstuckey@rutgers.edu', 'TEST EMAIL', `Here's my resume!`, [filepath]);
 
 module.exports = sendEmail;
