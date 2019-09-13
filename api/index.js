@@ -5,10 +5,9 @@ const express = require('express');
 const router = express();
 
 router.get('/', (req, res, next) => {
-    res.send({ msg: 'API version 2 running' });
+    res.send({ msg: 'Running' });
 });
 
-router.use('/auth', require('./routes/auth'));
-router.use('/users', require('./routes/users'));
+router.use('/api/v2', require('./v2'));
 
 module.exports = router;

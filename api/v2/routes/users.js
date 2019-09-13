@@ -2,10 +2,9 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const passport = require('passport');
-const logger = require('../modules/Logger');
-
-const User = require('../models/user');
+const logger = require('../../../modules/Logger');
+const sendEmail = require('../../../modules/sendEmail');
+const User = require('../../../models/user');
 
 const router = express.Router();
 
