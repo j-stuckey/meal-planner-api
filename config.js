@@ -11,4 +11,5 @@ module.exports = {
     JWT_EXPIRY: process.env.JWT_EXPIRY || '3d',
     EMAIL_ACCOUNT: process.env.EMAIL_ACCOUNT,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+    REQUEST_WINDOW: 'minute'
 };
