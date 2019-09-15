@@ -39,7 +39,9 @@ const DEV_REQUEST_LIMIT = 1000;
 const PROD_REQUEST_LIMIT = 100;
 
 const limiter = new RateLimiter(
-    process.env.NODE_ENV === 'production' ? PROD_REQUEST_LIMIT : DEV_REQUEST_LIMIT,
+    process.env.NODE_ENV === 'production'
+        ? PROD_REQUEST_LIMIT
+        : DEV_REQUEST_LIMIT,
     REQUEST_WINDOW,
 );
 
