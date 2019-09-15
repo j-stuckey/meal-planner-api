@@ -3,9 +3,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const logger = require('../../../modules/Logger');
-const sendEmail = require('../../../modules/sendEmail');
-const User = require('../../../models/user');
+const logger = require('modules/Logger');
+const sendEmail = require('modules/sendEmail');
+const User = require('models/user');
 
 const {
     HASH_SOURCE,

@@ -4,7 +4,7 @@ const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-const { JWT_EXPIRY, JWT_SECRET } = require('../../../config');
+const { JWT_EXPIRY, JWT_SECRET } = require('config');
 
 const router = express.Router();
 const options = { session: false, failWithError: true };
