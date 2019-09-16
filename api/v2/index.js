@@ -8,7 +8,7 @@ router.get('/', (req, res, next) => {
     res.send({ msg: 'API version 2 running' });
 });
 
-router.use('/auth', require('./routes/auth'));
-router.use('/users', require('./routes/users'));
+router.use(require('./register'));
+
 
 module.exports = router;
