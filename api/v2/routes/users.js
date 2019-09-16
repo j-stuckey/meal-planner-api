@@ -12,7 +12,7 @@ const {
     VERIFICATION_EMAIL,
     THANK_YOU_EMAIL_SUBJECT,
     THANK_YOU_EMAIL_TEXT
-} = require('../../../constants/constants');
+} = require('constants/constants');
 
 const router = express.Router();
 
