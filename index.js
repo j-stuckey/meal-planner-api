@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const logger = require('./modules/Logger');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 const passport = require('passport');
 const localStrategy = require('./passport/local');
@@ -13,7 +14,13 @@ const jwtStrategy = require('./passport/jwt');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
-const { PORT, CLIENT_ORIGIN, REQUEST_WINDOW } = require('./config');
+const {
+    PORT,
+    CLIENT_ORIGIN,
+    REQUEST_WINDOW,
+    DEV_REQUEST_LIMIT,
+    PROD_REQUEST_LIMIT,
+} = require('./config');
 
 const { dbConnect } = require('./db');
 
@@ -35,8 +42,16 @@ app.use(
 // parses request body
 app.use(express.json());
 
-const DEV_REQUEST_LIMIT = 1000;
-const PROD_REQUEST_LIMIT = 100;
+const limit = rateLimit({
+    windowMs: REQUEST_WINDOW,
+    max:
+        process.env.NODE_ENV === 'production'
+            ? PROD_REQUEST_LIMIT
+            : DEV_REQUEST_LIMIT,
+});
+
+// rate limiter
+app.use(limit);
 
 // Configures pasport to use the Strategies
 passport.use(localStrategy);
@@ -45,7 +60,7 @@ passport.use(jwtStrategy);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 
-app.get('/', rateLimiter(5, 'minute'), (req, res, next) => {
+app.get('/', (req, res, next) => {
     res.send(`<h1>OK</h1>`);
 });
 
