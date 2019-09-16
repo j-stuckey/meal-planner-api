@@ -5,7 +5,6 @@ const express = require('express');
 const cors = require('cors');
 const logger = require('./modules/Logger');
 const morgan = require('morgan');
-const RateLimiter = require('limiter').RateLimiter;
 
 const passport = require('passport');
 const localStrategy = require('./passport/local');
@@ -39,35 +38,15 @@ app.use(express.json());
 const DEV_REQUEST_LIMIT = 1000;
 const PROD_REQUEST_LIMIT = 100;
 
-const limiter = new RateLimiter(
-    process.env.NODE_ENV === 'production'
-        ? PROD_REQUEST_LIMIT
-        : DEV_REQUEST_LIMIT,
-    REQUEST_WINDOW,
-);
-
-const limit = (req, res, next) => {
-    limiter.removeTokens(1, (err, remainingRequests) => {
-        if (remainingRequests < 1) {
-            // res.writeHead(429, {'Content-Type': 'text/plain;charset=UTF-8'});
-            res.send('429 Too Many Requests - your IP is being rate limited');
-        } else {
-            next();
-        }
-    });
-};
-
 // Configures pasport to use the Strategies
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-app.use(limit);
-
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
 
-app.get('/', (req, res, next) => {
-    res.send('<h1>OK</h1>');
+app.get('/', rateLimiter(5, 'minute'), (req, res, next) => {
+    res.send(`<h1>OK</h1>`);
 });
 
 app.use('/api/v1', require('./api/v1'));
