@@ -26,7 +26,7 @@ const logger = winston.createLogger({
     levels: customLevels.levels,
     transports: [
         new winston.transports.File({
-            maxsize: '1000',
+            maxsize: '10000',
             filename: 'errors/error.log',
             level: 'error',
             format: winston.format.simple(),

@@ -3,20 +3,37 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const logger = require('../../../modules/Logger');
-const sendEmail = require('../../../modules/sendEmail');
-const User = require('../../../models/user');
+const logger = require('modules/Logger');
+const sendEmail = require('modules/sendEmail');
+const User = require('models/user');
 
 const {
     HASH_SOURCE,
     VERIFICATION_EMAIL,
     THANK_YOU_EMAIL_SUBJECT,
-    THANK_YOU_EMAIL_TEXT
-} = require('../../../constants/constants');
+    THANK_YOU_EMAIL_TEXT,
+} = require('constants/constants');
 
 const router = express.Router();
 
-router.post('/', (req, res, next) => {
+const validateUserEmail = (req, res, next) => {
+    const { email } = req.body;
+    logger.debug(email);
+
+    return User.find({ email: email }).then(user => {
+        logger.debug(user);
+        if (user.email === email) {
+            const err = {
+                message: `Email ${req.body.email} is taken.`,
+                status: 400,
+            };
+            next(err);
+        }
+        next();
+    });
+};
+
+router.post('/', validateUserEmail, (req, res, next) => {
     let { username, password, email } = req.body;
 
     return User.hashPassword(password)
@@ -26,21 +43,8 @@ router.post('/', (req, res, next) => {
                 username: username.toLowerCase(),
                 password: digest,
             };
-            // return User.create(newUser);
-
-            // sendEmail(email, "Thanks for signing up!", 'Test');
-            return newUser;
-        })
-        .then(user => {
-            logger.debug(VERIFICATION_EMAIL);
-
-            const salt = bcrypt.genSaltSync(10);
-            const verificationToken = bcrypt.hashSync(HASH_SOURCE, salt);
-
-            const emailText =
-                THANK_YOU_EMAIL_TEXT +
-                `http://localhost:8080/account/verify/${verificationToken}`;
-            sendEmail(user.email, THANK_YOU_EMAIL_SUBJECT, emailText);
+            logger.debug(`Creating new user...`);
+            return User.create(newUser);
         })
         .then(result => {
             return res
