@@ -17,20 +17,37 @@ const {
 const router = express.Router();
 
 const validateUserEmail = (req, res, next) => {
-    const { email } = req.body;
-    logger.debug(email);
+    const { email, username } = req.body;
 
-    return User.find({ email: email }).then(user => {
-        logger.debug(user);
-        if (user.email === email) {
-            const err = {
-                message: `Email ${req.body.email} is taken.`,
-                status: 400,
-            };
-            next(err);
-        }
-        next();
-    });
+    User.find({ email })
+        .then(user => {
+            if (user.length) {
+                const err = {
+                    message: `Email ${email} is taken.`,
+                    status: 400,
+                };
+                // res.status(400).json({ err });
+                next(err);
+            } else {
+                return User.find({ username });
+            }
+
+            // return User.find({ username });
+        })
+        .then(user => {
+            if (user.length) {
+                const err = {
+                    message: `Username ${username} is taken.`,
+                    status: 400,
+                };
+
+                next(err);
+            } else {
+                next();
+            }
+        }).catch(err => {
+            logger.debug(err);
+        });
 };
 
 router.post('/', validateUserEmail, (req, res, next) => {
@@ -43,7 +60,7 @@ router.post('/', validateUserEmail, (req, res, next) => {
                 username: username.toLowerCase(),
                 password: digest,
             };
-            logger.debug(`Creating new user...`);
+            logger.info(`Creating new user...`);
             return User.create(newUser);
         })
         .then(result => {
@@ -53,10 +70,11 @@ router.post('/', validateUserEmail, (req, res, next) => {
                 .json(result);
         })
         .catch(err => {
-            if (err.code === 11000) {
-                err = new Error(`Username '${req.body.username}' is taken`);
-                err.status = 400;
-            }
+            console.log(err);
+            // if (err.code === 11000) {
+            //     err = new Error(`Username '${req.body.username}' is taken`);
+            //     err.status = 400;
+            // }
             next(err);
         });
 });

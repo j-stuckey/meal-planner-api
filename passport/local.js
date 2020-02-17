@@ -1,6 +1,7 @@
 'use strict';
 
 const { Strategy: LocalStrategy } = require('passport-local');
+const logger = require('modules/Logger');
 
 const User = require('../models/user');
 
@@ -11,6 +12,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
         .then(results => {
             user = results;
             if (!user) {
+                logger.error(`User "${username}" does not exist`);
                 return Promise.reject({
                     reason: 'LoginError',
                     message: 'Incorrect username',
@@ -21,6 +23,8 @@ const localStrategy = new LocalStrategy((username, password, done) => {
         })
         .then(isValid => {
             if (!isValid) {
+                logger.error('Incorrect password');
+
                 return Promise.reject({
                     reason: 'LoginError',
                     message: 'Incorrect password',

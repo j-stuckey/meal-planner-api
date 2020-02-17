@@ -3,13 +3,15 @@
 const express = require('express');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const logger = require('modules/Logger');
 
-const { JWT_EXPIRY, JWT_SECRET } = require('../../../config');
+const User = require('models/user');
+
+const { JWT_EXPIRY, JWT_SECRET } = require('config');
 
 const router = express.Router();
-const options = { session: false, failWithError: true };
 
-const localAuth = passport.authenticate('local', options);
+const localAuth = passport.authenticate('local', { session: false, failWithError: true });
 const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
 function createAuthToken(user) {
